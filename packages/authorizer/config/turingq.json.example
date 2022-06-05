@@ -1,0 +1,7 @@
+{
+  "realm": "seu_realm",
+  "displayName": "SeuRealm",
+  "enabled": true,
+  "accessTokenLifespan": 1800,
+  "clients": []
+}
