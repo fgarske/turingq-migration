@@ -1,7 +1,23 @@
 {
-  "realm": "seu_realm",
-  "displayName": "SeuRealm",
+  "realm": "turingq",
+  "displayName": "TuringQ",
   "enabled": true,
   "accessTokenLifespan": 1800,
-  "clients": []
+  "clients": [
+    {
+      "clientId": "turingq-frontend-client",
+      "name": "turingq-frontend-client",
+      "description": "Frontend",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "rootUrl": "http://localhost:3000",
+      "redirectUris": [
+        "http://localhost:3000/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000"
+      ]
+    }
+  ]
 }
