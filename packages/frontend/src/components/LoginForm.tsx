@@ -18,6 +18,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { Alert } from '@material-ui/lab';
 import { Link as RouterLink, Redirect } from 'react-router-dom';
 import { Formik, FormikHelpers } from 'formik';
+import KeycloakLogin from './KeycloakLogin';
 
 import FormValidationError from '../errors/FormValidationError';
 import Message from '../interfaces/Message';
@@ -110,7 +111,16 @@ const LoginForm: React.FC = () => {
   if (authContext.loggedIn) {
     return <Redirect to="/" />;
   }
-
+  // Se nossa flag indicar que devemos usar o Keycloak,
+  // retornamos o componente de login do Keycloak que acabamos
+  // de criar.
+  const useAuthServer = process.env.REACT_APP_USE_AUTH_SERVER === 'true';
+  if (useAuthServer) {
+    return <KeycloakLogin />;
+  }
+  // Caso contrário, o componente segue o fluxo
+  // original em que um formulário de login é apresentado
+  // nas linhas seguintes.
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
