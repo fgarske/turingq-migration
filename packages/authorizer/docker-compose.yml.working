@@ -12,13 +12,13 @@ services:
       volumes:
         - postgres_data:/var/lib/postgresql/data
       ports:
-        - ${DB_LOCAL_PORT}:5432
+        - 5002:5432
       networks:
         - turingq-keycloak-net
       environment:
-        POSTGRES_DB: ${DB_NAME}
-        POSTGRES_USER: ${DB_USER}
-        POSTGRES_PASSWORD: ${DB_PASSWORD}
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: keycloak
   
   authorizer:
       image: quay.io/keycloak/keycloak:15.0.2
@@ -27,14 +27,14 @@ services:
       environment:
         DB_VENDOR: POSTGRES
         DB_ADDR: authorizer-db
-        DB_DATABASE: ${DB_NAME}
-        DB_USER: ${DB_USER}
+        DB_DATABASE: keycloak
+        DB_USER: keycloak
         DB_SCHEMA: public
-        DB_PASSWORD: ${DB_PASSWORD}
-        KEYCLOAK_USER: ${AUTH_USER}
-        KEYCLOAK_PASSWORD: ${AUTH_PASSWORD}
+        DB_PASSWORD: keycloak
+        KEYCLOAK_USER: keycloak-admin
+        KEYCLOAK_PASSWORD: keycloak-admin
       ports:
-        - ${AUTH_PORT}:8080
+        - 8080:8080
       networks:
         - turingq-keycloak-net
       depends_on:
@@ -48,8 +48,8 @@ services:
       restart: always
       environment:
         KEYCLOAK_URL: http://turingq-authorizer-dev:8080/auth
-        KEYCLOAK_USER: ${AUTH_USER}
-        KEYCLOAK_PASSWORD: ${AUTH_PASSWORD}
+        KEYCLOAK_USER: keycloak-admin
+        KEYCLOAK_PASSWORD: keycloak-admin
         KEYCLOAK_AVAILABILITYCHECK_ENABLED: "true"
         KEYCLOAK_SSLVERIFY: "false"
         IMPORT_PATH: /config
