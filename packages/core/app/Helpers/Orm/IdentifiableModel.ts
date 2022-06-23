@@ -9,6 +9,12 @@ export default class IdentifiableModel extends BaseModel {
 
   @beforeCreate()
   public static async createUUID(identifiableModel: IdentifiableModel) {
-    identifiableModel.id = uuid()
+    // Criamos um id somente se este ID não existir
+    // anteriormente. Se não fizermos isso, o Adonis vai gerar
+    // um ID novo aleatório antes salvar o usuário mesmo que
+    // já exista um ID definido:
+    if (!identifiableModel.id) {
+      identifiableModel.id = uuid()
+    }
   }
 }

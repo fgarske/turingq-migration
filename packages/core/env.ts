@@ -33,4 +33,10 @@ export default Env.rules({
   SMTP_USERNAME: Env.schema.string(),
   SMTP_PASSWORD: Env.schema.string(),
   MAIL_FROM: Env.schema.string({ format: 'email' }),
+  KEYCLOAK_CLIENT_ID: Env.schema.string(),
+  KEYCLOAK_CLIENT_SECRET: Env.schema.string(),
+  KEYCLOAK_AUTH_SERVER_URL: Env.schema.string(),
+  KEYCLOAK_REALM: Env.schema.string(),
+  KEYCLOAK_REALM_TOKEN_SIGNATURE_PUBLIC_KEY: Env.schema.string(),
+  USE_KEYCLOAK: Env.schema.boolean(),
 })
