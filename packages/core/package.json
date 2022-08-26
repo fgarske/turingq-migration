@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@adonisjs/assembler": "^5.3.8",
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/supertest": "^2.0.11",
     "@types/uuid": "^8.3.3",
     "adonis-preset-ts": "^2.1.0",
@@ -36,6 +37,8 @@
     "@adonisjs/mail": "^7.2.4",
     "@adonisjs/repl": "^3.1.7",
     "@adonisjs/shield": "^7.0.7",
+    "@keycloak/keycloak-admin-client": "^15.0.2",
+    "jsonwebtoken": "^8.5.1",
     "luxon": "^2.1.1",
     "nyc": "^15.1.0",
     "pg": "^8.7.1",

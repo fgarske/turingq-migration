@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+  registry:
+    # O registry é uma aplicação que implementa uma espécie de
+    # "Docker Hub" local. O mais interessante é que podemos
+    # utilizar o próprio Docker com esta aplicação!
+    image: registry:2
+    container_name: ${REGISTRY_NAME}
+    restart: always
+
+    # Por padrão, o registry escuta na porta 5000.
+    ports:
+      - 127.0.0.1:${REGISTRY_PORT}:5000
+
+    # Precisamos de uma rede. O motivo segue mais abaixo.
+    networks:
+      - ituring-registry-ui-net
+
+  # O registry não tem interface gráfica. Um outro projeto
+  # foi criado com uma interface gráfica simples para 
+  # gerenciar o registry.
+  registry-ui:
+    image: joxit/docker-registry-ui:2.0-debian
+    container_name: ${REGISTRY_NAME}-ui
+
+    # Este projeto expõe a porta 80 por padrão.
+    ports:
+      - ${REGISTRY_UI_PORT}:80
+
+    # E aqui configuramos algumas variáveis de ambiente que o
+    # projeto aceita. Uma delas é exatamente o endereço do
+    # container que contém o registry.
+    environment:
+      - REGISTRY_TITLE=ITuring Private Docker Registry
+      - NGINX_PROXY_PASS_URL=http://${REGISTRY_NAME}:5000
+
+    # A interface gráfica só funciona se o registry estiver
+    # disponível:
+    depends_on:
+      - registry
+
+    # Colocamos este container na mesma rede do registry.
+    # Dessa forma, ambos os containers podem se comunicar.
+    networks:
+      - ituring-registry-ui-net
+
+# Definimos a rede que será utilizada pelos containers acima.
+# Como essa rede só é utilizada por estes dois containers,
+# nenhum outro container poderá enxergar o repositório ou
+# a interface gráfica dele. Entretanto, iremos precisar que
+# o cluster Kubernetes tenha acesso pelo menos ao registry.
+# Veremos como resolver isso mais tarde.
+
+networks:
+  ituring-registry-ui-net:

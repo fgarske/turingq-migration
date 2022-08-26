@@ -31,7 +31,7 @@ export default class AnswersController {
   }
 
   public async store({ auth, request, response }: HttpContextContract) {
-    const userId = auth.use('api').user!.id
+    const userId = this.getUserId(auth, request)
     const answer = await this.save(request, userId)
 
     Event.emit('new:answer', answer)
@@ -40,7 +40,7 @@ export default class AnswersController {
   }
 
   public async update({ auth, request, response }: HttpContextContract) {
-    const userId = auth.use('api').user!.id
+    const userId = this.getUserId(auth, request)
     const questionId = request.param('question_id')
 
     let answerInDb = (
@@ -62,8 +62,8 @@ export default class AnswersController {
     return response[responseMethod](question.toJSON())
   }
 
-  public async destroy({ auth, params, response }: HttpContextContract) {
-    const userId = auth.use('api').user!.id
+  public async destroy({ auth, params, response, request }: HttpContextContract) {
+    const userId = this.getUserId(auth, request)
     const answer = await Answer.findOrFail(params.id)
     if (answer.authorId !== userId) {
       return response.unauthorized({ error: 'You cannot remove an answer from another author' })
@@ -83,5 +83,20 @@ export default class AnswersController {
     answerToSave.body = string.escapeHTML(payload.body)
 
     return answerToSave.save()
+  }
+  private getUserId(auth, request) {
+    const useKeycloak = Env.get('USE_KEYCLOAK')
+
+    // Dependendo de nossa variável de ambiente, retornamos
+    // o ID do usuário de um lugar diferente:
+    if (useKeycloak) {
+      // O middleware que criamos armazena o usuário no objeto
+      // “request”:
+      return request['user'].id
+    } else {
+      // O sistema de autenticação do Adonis tem seu próprio
+      // meio de acessar o usuário:
+      return auth.use('api').user!.id
+    }
   }
 }
