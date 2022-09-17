@@ -1,0 +1,12 @@
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: authorizer-config-configmap
+#  namespace: default
+#data:
+#  # Note que a URL contém o nome do serviço no Kubernetes 
+#  # como hostname:
+#  KEYCLOAK_URL: 'http://authorizer-service:8080/auth'
+#  KEYCLOAK_AVAILABILITYCHECK_ENABLED: 'true'
+#  KEYCLOAK_SSLVERIFY: 'false'
+#  IMPORT_PATH: '/config'

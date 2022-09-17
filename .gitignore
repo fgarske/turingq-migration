@@ -8,3 +8,5 @@ tmp
 .DS_STORE
 .env
 .env.docker
+**/config-map.yml
+**/secret.yml

@@ -1,0 +1,8 @@
+
+FROM quay.io/adorsys/keycloak-config-cli:latest-15.0.2
+
+COPY --chmod=555 packages/authorizer/config/turingq-prod.json /config/
+
+
+
+

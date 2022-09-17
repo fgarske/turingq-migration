@@ -1,0 +1,7 @@
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: authorizer-configmap
+#  namespace: default
+#data:
+#  KEYCLOAK_PORT: '8080'

@@ -1,0 +1,28 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: authorizer-service
+  namespace: default
+spec:
+  # Lembra que na spec do deployment temos
+  # "selector -> matchLabels -> app = authorizer"?
+  # Lembre-se que o deployment irá criar pods.
+  # Abaixo dizemos que este service vai procurar por pods que
+  # tenham uma "match label" chamada "app" com o valor
+  # "authorizer". É assim que este service identifica os pods
+  # corretos. Se tivéssemos várias réplicas, o service atuaria
+  # como um load balancer.
+  selector:
+    app: authorizer
+
+  # Vamos trabalhar com o tipo "NodePort" neste Service:
+  type: NodePort
+
+  ports:
+    - name: http
+      # A porta do nosso service:
+      port: 8080
+      # A porta do container:
+      targetPort: 8080
+      # A nodePort a utilizar:
+      nodePort: 30000

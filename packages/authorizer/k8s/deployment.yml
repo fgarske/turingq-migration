@@ -1,0 +1,52 @@
+# Vamos criar um deployment:
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  # Utilizaremos este metadado nos services para identificar
+  # o deployment correto:
+  name: authorizer-deployment
+
+  # E o que seria este namespace? Bem, namespaces são como um
+  # cluster virtual dentro do cluster Kubernetes. Eles são
+  # logicamente isolados uns dos outros. Você pode ter, por
+  # exemplo, um deployment com o mesmo nome em namespaces
+  # diferentes. Namespaces são úteis para organização,
+  # segurança e até controle de performance.
+  # A maioria das distribuições Kubernetes tem um namespace
+  # chamado "default". Se você não informar o namespace aqui,
+  # é no "default" que o que você estiver aplicando será
+  # criado. Assim, a linha abaixo não é necessária. A
+  # introduzimos apenas para te apresentar este novo conceito.
+  namespace: default
+
+spec:
+  # Utilizaremos a label definida a seguir mais tarde:
+  selector:
+    matchLabels:
+      app: authorizer
+
+  # Vamos trabalhar com apenas uma réplica. Lembre-se que 
+  # estamos com um banco de dados em memória e cada réplica é
+  # independente. Caso você tenha criado um banco de dados
+  # próprio para o Keycloak, poderíamos ter várias réplicas
+  # utilizando o mesmo banco de dados.
+  replicas: 1
+
+  # Segue o template do Pod que será utilizado pelo
+  # deployment:
+  template:
+    metadata:
+      labels:
+        app: authorizer
+    # Esta é a spec do pod que será criado. Não confundir com
+    # a spec do deployment mais acima:
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: authorizer-configmap
+        - secretRef:
+            name: authorizer-secret
+        name: authorizer
+        image: quay.io/keycloak/keycloak:15.0.2

@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: authorizer-config-job
+spec:
+  template:
+    spec:
+      containers:
+      - envFrom:
+        - configMapRef:
+            name: authorizer-config-configmap
+        - secretRef:
+            name: authorizer-config-secret
+        name: authorizer-config
+        image: localhost:5000/turingq-authorizer-config
+      restartPolicy: OnFailure
