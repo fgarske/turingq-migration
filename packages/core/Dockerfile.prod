@@ -1,0 +1,41 @@
+# Vamos exercitar o multi-stage building:
+FROM node:16.10-alpine as builder
+
+# Criamos um diretório para conter o código-fonte do nosso
+# projeto e o definimos como nosso diretório de trabalho:
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Copiamos apenas o core para dentro do "workdir":
+COPY packages/core ./
+
+# Para que a build do Adonis funcione, precisamos instalar
+# as dependências antes de executar a build. Depois da build,
+# utilizamos o "npm ci" para instalar as dependências de
+# produção dentro da pasta da build.
+# O "npm ci" é similar ao "npm install", mas o "ci" não
+# atualiza o package-lock.json. De fato, o "ci" utiliza
+# o package-lock.json para instalar as dependências, e 
+# consulta o package.json apenas para verificar se não há
+# alguma inconsistência entre as versões. O "npm ci" é
+# adequado para garantir que as versões exatas dos pacotes
+# no package-lock.json serão instaladas. Não há updates de
+# versão. "ci" é a abreviação de "Continuous Integration".
+RUN npm install \
+    && npm run build \
+    && cd build \
+    && npm ci --production
+
+# Utilizamos outra imagem do node para produção:
+FROM node:16.10-alpine
+
+# Criamos um diretório para conter o nosso projeto e o
+# definimos como nosso diretório de trabalho:
+RUN mkdir -p /usr/app
+WORKDIR /usr/app
+
+# Temos um "node_modules" dentro de "build" graças ao
+# "npm ci". Copiamos a build inteira aqui:
+COPY --from=builder "/usr/src/app/build" "/usr/app"
+
+CMD [ "npm", "run", "start" ]

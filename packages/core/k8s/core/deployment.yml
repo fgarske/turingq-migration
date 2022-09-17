@@ -1,0 +1,54 @@
+# Este arquivo é bem similar ao que já trabalhamos
+# anteriormente, vamos comentar apenas as diferenças.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: core-deployment
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: core
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: core
+    spec:
+      containers:
+        - envFrom:
+          - configMapRef:
+              name: core-configmap
+          - secretRef:
+              name: core-secret
+          name: core
+          image: localhost:5000/turingq-core
+          imagePullPolicy: IfNotPresent
+      # A partir daqui aparece algo que não trabalhamos ainda.
+      # Dê uma rápida olhada nas linhas abaixo: temos um
+      # segundo container com o core que executa as
+      # migrations. Guarde esta informação, explicaremos como
+      # isso funciona um pouco mais abaixo.
+      initContainers:
+        - envFrom:
+          - configMapRef:
+              name: core-configmap
+          - secretRef:
+              name: core-secret
+          name: core-migrate-db
+          image: localhost:5000/turingq-core
+          # Notou o "--force" abaixo? É uma proteção do 
+          # AdonisJS para evitar que migrations sejam
+          # executadas em produção por acidente. Migrations
+          # podem ser perigosas porque elas mexem com os
+          # dados e com a estrutura das tabelas, então pode
+          # ser arriscado executá-las em produção. No nosso
+          # caso, entretanto, estamos utilizando-as para 
+          # preparar o banco de dados, então não há problema.
+          # O AdonisJS, entretanto, exige que utilizemos o
+          # parâmetro "--force" para que a execução ocorra.
+          # E como o AdonisJS sabe que estamos em produção?
+          # Essa é fácil! Ele lê o valor da variável NODE_ENV,
+          # que é definida em nosso config-map como
+          # "production"!
+          command: ['node', 'ace', 'migration:run', '--force']

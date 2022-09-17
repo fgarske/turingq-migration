@@ -1,0 +1,38 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: core-configmap
+  namespace: default
+data:
+  PORT: '3001'
+  HOST: '0.0.0.0'
+  NODE_ENV: 'production'
+  # O valor abaixo deve ser o equivalente em minutos ao valor
+  # de accessTokenLifespan na configuração do realm:
+  AUTH_TOKEN_EXPIRATION_MINUTES: '30'
+  PAGINATION_LIMIT: '10'
+  DB_CONNECTION: 'pg'
+  # Utilize abaixo os dados de SMTP do Mailtrap:
+  SMTP_HOST: 'localhost'
+  SMTP_PORT: '587'
+  MAIL_FROM: 'info@example.com'
+  # Notou que estamos utilizando o nome de um service abaixo?
+  # Criaremos este service em breve
+  #PG_HOST: 'core-database-service'
+  #PG_PORT: '5432'
+  #PG_DB_NAME: 'ituring'
+  # Estamos utilizando o nome do service do authorizer abaixo
+  # também.
+  #KEYCLOAK_AUTH_SERVER_URL: 'http://authorizer-service:8080/auth'
+  #KEYCLOAK_CLIENT_ID: 'turingq-core-client'
+  #KEYCLOAK_REALM: 'turingq'
+  # Preste bastante atenção ao valor a seguir. Você precisa
+  # autenticar no Keycloak que está rodando dentro do
+  # Kubernetes e colar a public key de assinatura no valor
+  # desta variável. Se este passo não for feito corretamente,
+  # os microsserviços não serão capazes de validar o token de
+  # acesso.
+  #KEYCLOAK_REALM_TOKEN_SIGNATURE_PUBLIC_KEY: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA02DRwRPtZsKjhOf4YF5+1NYTePfs1gvQNCVPQvPDW+5ZunCLDhn/MbaHv3dWNSiWYOiTKwTojrvhmpXiBAcf0rZ047gpeiy0psP35A4/yGUH4bK2b/OdD+pdEfiajblvZyJSCYTMIUxs8YcXbSd8V36Ggj8m6iwxVUlv+OIc5JTLsPi8g0DFPSwPrs+aTyA062rNwvBAqrf5/tSJ+mgkQUcZ24qcHR0FnZN3x+u2kji+kZxd3HknjQUiBwhDswqfo6E9H7BrNP78hBHSLiaXXpgKaIZ2nlQEO1RCY0BTEDNmEWSt1irJr8HH9Ql9A7dGgr+7UxoxOARHkFomPwsrXQIDAQAB'
+  #USE_KEYCLOAK: 'true'
+

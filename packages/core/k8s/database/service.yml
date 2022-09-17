@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: core-database-service
+  namespace: default
+spec:
+  type: NodePort
+  # Note que utilizamos as portas do PostgreSQL e utilizamos
+  # um novo nodePort para evitar conflitos
+  ports:
+    - name: http
+      port: 5432
+      targetPort: 5432
+      nodePort: 30002
+  selector:
+    app: core-database

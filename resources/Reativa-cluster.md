@@ -24,5 +24,16 @@
     http://localhost:8000/auth/
 
 
+# **Todos os passos anteriores de configuração dos conteineres podem ser feitos com o comando abaixo**
+npm run deploy:local:authorizer
+
+
+# **subindo o core no kubernetes**
+kubectl apply -f packages/core/k8s/database 
+kubectl apply -f packages/core/k8s/core
+kubectl get po
+depois disso deu erro e foi feita a configuração do deploy.
+com esse comando o deploy do core vai funcionar:
+npm run deploy:local:core
 
   

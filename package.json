@@ -2,8 +2,19 @@
   "name": "turingq-migration",
   "private": true,
   "scripts": {
-    "bootstrap": "lerna bootstrap --hoist && lerna link",
-    "setup": "npm install && npm run bootstrap"
+    "bootstrap:dev": "lerna bootstrap --hoist",
+    "docker:build:core": "docker build -t turingq/core:latest -f packages/core/Dockerfile.prod .",
+    "docker:build:authorizer-config": "docker build -t turingq/authorizer-config:latest -f packages/authorizer/Dockerfile.prod .",
+    "docker:local:tag:core": "docker tag turingq/core localhost:5000/turingq-core",
+    "docker:local:tag:authorizer-config": "docker tag turingq/authorizer-config localhost:5000/turingq-authorizer-config",
+    "docker:local:push:core": "docker push localhost:5000/turingq-core",
+    "docker:local:push:authorizer-config": "docker push localhost:5000/turingq-authorizer-config",
+    "docker:prepare-local-image:core": "run-s docker:build:core docker:local:tag:core docker:local:push:core",
+    "docker:prepare-local-image:authorizer-config": "run-s docker:build:authorizer-config docker:local:tag:authorizer-config docker:local:push:authorizer-config",
+    "kubernetes:setup:core": "kubectl apply -f packages/core/k8s/database",
+    "kubernetes:setup:authorizer": "kubectl apply -f packages/authorizer/k8s -f packages/authorizer/k8s/authorizer-config",
+    "deploy:local:core": "run-s docker:prepare-local-image:core kubernetes:setup:core",
+    "deploy:local:authorizer": "run-s docker:prepare-local-image:authorizer-config kubernetes:setup:authorizer"
   },
   "devDependencies": {
     "adonis-preset-ts": "^2.1.0",

@@ -1,0 +1,7 @@
+#apiVersion: v1
+#kind: ConfigMap
+#metadata:
+#  name: core-database-configmap
+#  namespace: default
+#data:
+#  POSTGRES_DB: 'ituring'

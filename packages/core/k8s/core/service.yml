@@ -1,0 +1,20 @@
+# Este service é muito similar ao que criamos anteriormente.
+kind: Service
+apiVersion: v1
+metadata:
+  name: core-service
+  namespace: default
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      # As portas abaixo são diferentes do service que criamos
+      # para o Keycloak porque a nossa aplicação em Node.js
+      # executa na porta 3001.
+      port: 3001
+      targetPort: 3001
+      # E também utilizamos uma NodePort diferente para não
+      # conflitar com o que já temos para o Keycloak.
+      nodePort: 30001
+  selector:
+    app: core

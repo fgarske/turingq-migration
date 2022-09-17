@@ -1,0 +1,24 @@
+# Temos aqui um deployment do PostgreSQL
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: core-database-deployment
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: core-database
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: core-database
+    spec:
+      containers:
+        - envFrom:
+          - configMapRef:
+              name: core-database-configmap
+          - secretRef:
+              name: core-database-secret
+          name: core-database
+          image: postgres:13-alpine
