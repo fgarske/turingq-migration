@@ -3,6 +3,8 @@
 1. Deletar cluster kind do kubernetes e reiniciar registry no docker
    kind delete cluster --name=turingq-local
 2. startar o registry
+   cd ~/turingq-migration/resources/registry
+   docker-compose up -d
 3. rodar script para criação do cluster kind no docker
    cd ~/turingq-migration/resources/kubernetes
    sh create-kind-cluster.sh
@@ -18,13 +20,13 @@
    kubectl describe job/authorizer-config-job
 8. conferir se os pods estão rodando
    kubectl get po
-9. encaminhar a porta do keycloak para poder acessar no browser
+9.  encaminhar a porta do keycloak para poder acessar no browser
     kubectl port-forward svc/authorizer-service 8000:8080
 10. acessar keycloak
     http://localhost:8000/auth/
 
 
-# **Todos os passos anteriores de configuração dos conteineres podem ser feitos com o comando abaixo**
+# **Todos os passos anteriores de configuração dos conteineres podem ser feitos com o comando abaixo** (a partir do passo 4 somente)
 npm run deploy:local:authorizer
 
 
