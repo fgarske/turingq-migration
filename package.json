@@ -25,9 +25,7 @@
     "deploy:local:authorizer": "run-s docker:prepare-local-image:authorizer-config kubernetes:setup:authorizer",
     "deploy:local:core": "run-s docker:prepare-local-image:core kubernetes:setup:core",
     "deploy:local:frontend": "run-s docker:prepare-local-image:frontend kubernetes:setup:frontend",
-
-    "deploy:local:all": "run-s docker:all:prepare-local-image kubernetes:setup:authorizer",
-
+    "deploy:all:local": "run-s docker:all:prepare-local-image kubernetes:setup:*"
   },
   "devDependencies": {
     "adonis-preset-ts": "^2.1.0",
