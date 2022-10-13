@@ -36,7 +36,7 @@ spec:
           - secretRef:
               name: core-secret
           name: core-migrate-db
-          image: localhost:5000/turingq-core
+          image: localhost:5000/turingq-core:v2
           # Notou o "--force" abaixo? É uma proteção do 
           # AdonisJS para evitar que migrations sejam
           # executadas em produção por acidente. Migrations

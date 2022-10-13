@@ -1,0 +1,72 @@
+# Vamos exercitar o multi-stage building novamente:
+FROM node:16.10-alpine as builder
+
+# Criamos um diretório para conter o nosso código-fonte e o
+# definimos como nosso diretório de trabalho:
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+
+# Os próximos passos executam a instalação das dependências.
+# Note que instalamos a dependência de desenvolvimento
+# "react-scripts" porque ela é utilizada no comando
+# "npm run build" dentro do "package.json". O comando de
+# "build" é o comando indicado pela documentação do React para
+# criar a build de produção.
+COPY packages/frontend/package.json .
+COPY packages/frontend/package-lock.json .
+
+RUN npm ci
+RUN npm install react-scripts@4.0.3 -g --silent
+COPY packages/frontend/. ./
+
+# Adicionamos a linha a seguir para deixar claro que estamos
+# utilizando as variáveis de produção nesta build:
+COPY packages/frontend/.env.production.local ./.env
+RUN npm run build
+
+# Utilizamos acima uma imagem contendo o Node.js para a nossa
+# build. O React cria um diretório "build" contendo tudo o que
+# precisamos para nossa aplicação. O código-fonte original,
+# isto é, tudo o que está fora deste diretório, não nos é
+# necessário em produção.
+
+# Para que o frontend funcione adequadamente dentro do
+# Kubernetes, precisamos de um servidor web. Poderíamos
+# continuar utilizando o Node.js, mas para exemplificar
+# o multistage building com uma imagem diferente, utilizaremos
+# uma imagem do NGinx. Não é um pré-requisito o curso que você
+# entenda como o NGinx funciona, então te daremos todos os
+# detalhes necessários. Entretanto, NGinx é um nome recorrente
+# no mundo de microsserviços. Vale a pena dar uma olhada mais
+# profunda nele no futuro.
+FROM nginx:1.20-alpine
+
+# Copiamos apenas o conteúdo do diretório "build" de nosso
+# "builder" (o container do Node.js que utilizamos
+# anteriormente). Adicionamos um "chmod=555" para garantir
+# que o NGinx tem permissão de leitura em todos os arquivos
+# gerados pela build:
+COPY --from=builder --chmod=555 "/usr/src/app/build" "/usr/share/nginx/html"
+
+# Surge algo novo aqui. Temos um arquivo de configuração do
+# NGinx que não temos ainda. Vamos criar este arquivo em
+# breve. Precisamos de uma configuração especial para servir
+# arquivos estáticos nesta imagem do NGinx. A boa notícia é
+# que isso não é tão complicado o quanto parece. Voltaremos
+# a este arquivo em breve.
+COPY packages/frontend/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Por padrão o NGinx funciona na porta 80. Também poderíamos
+# expor a 443 para utilizar SSL, mas teríamos que gerar
+# certificados. Não faremos isso neste curso. Entretanto,
+# quando você dominar o conteúdo do curso, este seria um
+# bom tópico para futuros estudos por questões de segurança.
+EXPOSE 80
+
+# O comando a seguir inicia o NGinx. O parâmetro "-g daemon
+# off;" faz com que o nginx inicie em foreground, e não em
+# background como seria comum. Ao executar o NGinx em
+# containers, precisamos do "daemon off".
+
+CMD ["nginx", "-g", "daemon off;"]
+
